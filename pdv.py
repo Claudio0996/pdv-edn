@@ -1,4 +1,3 @@
-print(subtotal)    
 itens = []
 continuar = "s"
 subtotal = 0
@@ -18,7 +17,7 @@ while continuar == "s":
     itens.append(item)
     continuar = input("Deseja adicionar mais itens?: ").strip().lower()
     
- for item in itens:
+for item in itens:
     subtotal = subtotal + item["preco"]
     
 
