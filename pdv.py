@@ -5,20 +5,28 @@ continuar = "s"
 
 # ===== PARTE 2: CADASTRAR OS PRODUTOS =====
 while continuar == "s":
-    nome = input("Nome do produto: ")
-
-    # Repete a pergunta até o preço ser um número maior que zero
-    preco = 0
-    while preco <= 0:
+    nome_do_produto = input("Qual o nome do produto ? ")
+    quantidade = int(input("Qual a quantidade do produto? "))
+    preco_do_produto = 0
+    while preco_do_produto <= 0:
+        preco_digitado_pelo_usuario = input("Qual o preço ? ")
         try:
             preco = float(input("Preço (ex: 12.50): "))
             if preco <= 0:
                 print("Erro: o preço deve ser maior que zero.")
         except ValueError:
-            print("Erro: digite um número.")
+            print("Erro: Digite um número.")
+            preco_do_produto = 0
 
-    itens.append({"nome": nome, "preco": preco})
-    subtotal = subtotal + preco
+    produto = {"nome_do_produto": nome_do_produto, "preco_do_produto": preco_do_produto, "quantidade": quantidade}
+    itens.append(produto)
+    continuar = input("Deseja adicionar mais itens?(s/n): ").strip().lower()
+
+for produto in itens:
+    subtotal = subtotal + (produto["preco_do_produto"]* produto["quantidade"])
+
+
+print(f"O valor sem o desconto é ${subtotal}")
 
     continuar = input("Adicionar mais itens? (s/n): ").strip().lower()
 

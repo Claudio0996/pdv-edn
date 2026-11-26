@@ -180,15 +180,16 @@ else:
 
 ## Conceitos de Python usados
 
-| Conceito | Para que serve | Onde aparece |
-|---|---|---|
-| `input()` | Ler o que o usuário digita | Partes 2 e 5 |
-| `float()` | Transformar texto em número | Partes 2 e 5 |
-| `while` | Repetir enquanto algo for verdade | Partes 2 e 5 |
-| `try` / `except` | Não quebrar quando o usuário digita letras | Partes 2 e 5 |
-| `if` / `elif` / `else` | Escolher um caminho | Partes 3 e 5 |
-| Lista e `append()` | Guardar vários produtos | Partes 1 e 2 |
-| Dicionário | Juntar nome e preço de um produto | Parte 2 |
-| `for` | Passar por cada item da lista | Parte 4 |
-| `.strip().lower()` | Limpar a resposta do usuário | Partes 2 e 5 |
-| f-string com `:.2f` | Mostrar dinheiro com 2 casas | Partes 4 e 5 |
+- **`input()`**: ler dados digitados pelo usuário
+- **`float()`**: converter texto em número decimal
+- **`while`**: repetir enquanto uma condição for verdadeira
+- **`for`**: percorrer os elementos de uma lista
+- **`if` / `elif` / `else`**: escolher um caminho entre vários
+- **`try` / `except`**: tratar erros sem travar o programa
+- **Listas** (`[]`, `.append()`): guardar vários valores em ordem
+- **Dicionários** (`{"chave": valor}`): agrupar dados com nomes
+- **Métodos de texto** (`.strip()`, `.lower()`): limpar e padronizar respostas
+- **f-strings**: montar textos com valores de variáveis
+
+
+- **f-strings**: montar textos com valores de variáveis (`:.2f` para 2 casas decimais)
