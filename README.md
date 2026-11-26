@@ -230,4 +230,7 @@ else:
 - **Listas** (`[]`, `.append()`): guardar vários valores em ordem
 - **Dicionários** (`{"chave": valor}`): agrupar dados com nomes
 - **Métodos de texto** (`.strip()`, `.lower()`): limpar e padronizar respostas
+- **f-strings**: montar textos com valores de variáveis
+
+
 - **f-strings**: montar textos com valores de variáveis (`:.2f` para 2 casas decimais)
