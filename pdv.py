@@ -1,7 +1,9 @@
-itens = []
-continuar = "s"
-subtotal = 0
+# ===== PARTE 1: PREPARAÇÃO =====
+itens = []        
+subtotal = 0      
+continuar = "s"   
 
+# ===== PARTE 2: CADASTRAR OS PRODUTOS =====
 while continuar == "s":
     nome_do_produto = input("Qual o nome do produto ? ")
     quantidade = int(input("Qual a quantidade do produto? "))
@@ -9,7 +11,9 @@ while continuar == "s":
     while preco_do_produto <= 0:
         preco_digitado_pelo_usuario = input("Qual o preço ? ")
         try:
-            preco_do_produto = float(preco_digitado_pelo_usuario)
+            preco = float(input("Preço (ex: 12.50): "))
+            if preco <= 0:
+                print("Erro: o preço deve ser maior que zero.")
         except ValueError:
             print("Erro: Digite um número.")
             preco_do_produto = 0
@@ -24,11 +28,9 @@ for produto in itens:
 
 print(f"O valor sem o desconto é ${subtotal}")
 
+    continuar = input("Adicionar mais itens? (s/n): ").strip().lower()
 
-print(f"O valor sem o desconto é R$ {subtotal:.2f}")
-
-# Desafio 3: desconto progressivo
-# 5% acima de R$ 50, 10% acima de R$ 100 e 15% acima de R$ 200
+# ===== PARTE 3: DESCONTO PROGRESSIVO =====
 if subtotal > 200:
     desconto = subtotal * 0.15
 elif subtotal > 100:
@@ -40,30 +42,31 @@ else:
 
 total = subtotal - desconto
 
+# ===== PARTE 4: CUPOM =====
 print()
 print("========== CUPOM ==========")
-for produto in itens:
-    print(f"{produto['nome_do_produto']}  R$ {produto['preco_do_produto']:.2f}")
+for item in itens:
+    print(f"{item['nome']}  R$ {item['preco']:.2f}")
 print("---------------------------")
 print(f"Subtotal:  R$ {subtotal:.2f}")
 print(f"Desconto:  R$ {desconto:.2f}")
 print(f"Total:     R$ {total:.2f}")
 print("===========================")
 
-# Desafio 2: forma de pagamento e troco
-forma_de_pagamento = input("Qual a forma de pagamento? (dinheiro/cartao): ").strip().lower()
+# ===== PARTE 5: PAGAMENTO E TROCO =====
+pagamento = input("Forma de pagamento (dinheiro/cartao): ").strip().lower()
 
-if forma_de_pagamento == "dinheiro":
+if pagamento == "dinheiro":
+    # Repete a pergunta até o valor cobrir o total
     valor_pago = 0
     while valor_pago < total:
-        valor_digitado_pelo_usuario = input("Quanto o cliente pagou? ")
         try:
-            valor_pago = float(valor_digitado_pelo_usuario)
+            valor_pago = float(input("Valor pago: "))
             if valor_pago < total:
                 print("Erro: o valor é menor que o total.")
         except ValueError:
-            print("Erro: Digite um número.")
-            valor_pago = 0
+            print("Erro: digite um número.")
+
     troco = valor_pago - total
     print(f"Troco: R$ {troco:.2f}")
 else:

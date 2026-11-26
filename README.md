@@ -1,6 +1,11 @@
 # PDV — Ponto de Venda em Python
 
-Um programa simples de terminal que funciona como o caixa de uma loja: você informa os produtos e os preços, e no final ele aplica um desconto progressivo, imprime o cupom e pergunta a forma de pagamento. Se o pagamento for em dinheiro, ele calcula o troco.
+Um programa de terminal que funciona como o caixa de uma loja:
+
+1. você informa os produtos e os preços;
+2. ele aplica um desconto que cresce com o valor da compra;
+3. imprime o cupom;
+4. pergunta a forma de pagamento e, se for dinheiro, calcula o troco.
 
 ## Como executar
 
@@ -10,18 +15,21 @@ Um programa simples de terminal que funciona como o caixa de uma loja: você inf
 python pdv.py
 ```
 
+> Use ponto nos preços (`12.50`), não vírgula (`12,50`).
+
 ## Exemplo de uso
 
 ```
-Qual o nome do produto ? arroz
-Qual o preço ? abc
-Erro: Digite um número.
-Qual o preço ? 50
-Deseja adicionar mais itens?(s/n): s
-Qual o nome do produto ? feijao
-Qual o preço ? 70
-Deseja adicionar mais itens?(s/n): n
-O valor sem o desconto é R$ 120.00
+Nome do produto: arroz
+Preço (ex: 12.50): abc
+Erro: digite um número.
+Preço (ex: 12.50): 0
+Erro: o preço deve ser maior que zero.
+Preço (ex: 12.50): 50
+Adicionar mais itens? (s/n): s
+Nome do produto: feijao
+Preço (ex: 12.50): 70
+Adicionar mais itens? (s/n): n
 
 ========== CUPOM ==========
 arroz  R$ 50.00
@@ -31,117 +39,66 @@ Subtotal:  R$ 120.00
 Desconto:  R$ 12.00
 Total:     R$ 108.00
 ===========================
-Qual a forma de pagamento? (dinheiro/cartao): dinheiro
-Quanto o cliente pagou? 100
+Forma de pagamento (dinheiro/cartao): dinheiro
+Valor pago: 100
 Erro: o valor é menor que o total.
-Quanto o cliente pagou? 150
+Valor pago: 150
 Troco: R$ 42.00
 ```
 
-> Use ponto como separador decimal (`10.5`), não vírgula (`10,5`). Com vírgula, o Python não consegue converter o texto em número e o programa pede o preço de novo.
+## Roteiro do código
 
-## Variáveis
+O código está dividido em 5 partes, marcadas no arquivo com `# ===== PARTE N =====`.
 
-| Variável | Tipo | O que guarda |
-|---|---|---|
-| `itens` | lista (`list`) | Todos os produtos adicionados na compra. Começa vazia (`[]`). |
-| `continuar` | texto (`str`) | A resposta do usuário à pergunta "Deseja adicionar mais itens?". Começa com `"s"` para o laço rodar pelo menos uma vez. |
-| `subtotal` | número (`float`) | A soma dos preços de todos os produtos. Começa em `0`. |
-| `nome_do_produto` | texto (`str`) | O nome que o usuário digitou para o produto atual. |
-| `preco_do_produto` | número (`float`) | O preço do produto atual, já convertido para número. |
-| `preco_digitado_pelo_usuario` | texto (`str`) | O preço exatamente como foi digitado, antes de virar número. |
-| `produto` | dicionário (`dict`) | Um produto com dois campos: `"nome_do_produto"` e `"preco_do_produto"`. |
-| `desconto` | número (`float`) | O valor do desconto, calculado a partir do subtotal. |
-| `total` | número (`float`) | O valor a pagar: subtotal menos desconto. |
-| `forma_de_pagamento` | texto (`str`) | A forma de pagamento digitada: `"dinheiro"` ou `"cartao"`. |
-| `valor_digitado_pelo_usuario` | texto (`str`) | O valor pago exatamente como foi digitado, antes de virar número. |
-| `valor_pago` | número (`float`) | Quanto o cliente entregou em dinheiro. |
-| `troco` | número (`float`) | O que o caixa devolve: valor pago menos total. |
-
-## Como o código funciona, passo a passo
-
-### 1. Preparação
+### Parte 1: Preparação
 
 ```python
 itens = []
-continuar = "s"
 subtotal = 0
+continuar = "s"
 ```
 
-Cria a lista vazia de produtos, define `continuar` como `"s"` para entrar no laço logo de início e zera o subtotal.
+Cria o que o programa precisa **lembrar** durante a compra:
 
-### 2. Laço principal: cadastrar produtos
+- `itens`: lista vazia, onde cada produto vai entrar.
+- `subtotal`: começa em zero e vai somando os preços.
+- `continuar`: começa com `"s"` para o laço da parte 2 rodar pelo menos uma vez.
+
+Essas variáveis ficam **antes** do `while`. Se ficassem dentro, seriam zeradas a cada produto e a compra perderia os itens anteriores.
+
+### Parte 2: Cadastrar os produtos
 
 ```python
 while continuar == "s":
+    nome = input("Nome do produto: ")
+
+    preco = 0
+    while preco <= 0:
+        try:
+            preco = float(input("Preço (ex: 12.50): "))
+            if preco <= 0:
+                print("Erro: o preço deve ser maior que zero.")
+        except ValueError:
+            print("Erro: digite um número.")
+
+    itens.append({"nome": nome, "preco": preco})
+    subtotal = subtotal + preco
+
+    continuar = input("Adicionar mais itens? (s/n): ").strip().lower()
 ```
 
-Enquanto o usuário responder `"s"`, o programa continua pedindo produtos.
+O programa continua **enquanto** o usuário responder `s`. A cada volta, ele:
 
-### 3. Ler o nome
+1. **Pergunta o nome** do produto.
+2. **Pergunta o preço até ele ser válido.** O preço começa em `0` para forçar a entrada no `while` de dentro. Esse `while` só termina quando vem um número maior que zero:
+   - `float()` transforma o texto em número. `input()` sempre devolve texto, e com texto não dá para fazer conta.
+   - Se o usuário digitar letras, `float()` gera um `ValueError`. O `except` captura esse erro e mostra a mensagem, sem o programa quebrar.
+   - Se o número for `0` ou negativo, o `if` mostra a mensagem e o `while` pergunta de novo.
+3. **Guarda o produto** na lista. Cada produto é um dicionário com `"nome"` e `"preco"`.
+4. **Soma o preço** no subtotal.
+5. **Pergunta se quer continuar.** `.strip()` tira os espaços e `.lower()` deixa a resposta em minúsculas, então `S` também vale.
 
-```python
-nome_do_produto = input("Qual o nome do produto ? ")
-```
-
-`input()` mostra a pergunta e devolve, como texto, o que o usuário digitou.
-
-### 4. Ler e validar o preço
-
-```python
-preco_do_produto = 0
-while preco_do_produto <= 0:
-    preco_digitado_pelo_usuario = input("Qual o preço ? ")
-    try:
-        preco_do_produto = float(preco_digitado_pelo_usuario)
-    except ValueError:
-        print("Erro: Digite um número.")
-        preco_do_produto = 0
-```
-
-- O preço começa em `0` para forçar a entrada no laço de validação.
-- O laço se repete enquanto o preço for zero ou negativo.
-- `float()` tenta transformar o texto em número decimal.
-- Se o texto não for um número (ex.: `"abc"`), o Python gera um `ValueError`. O bloco `try/except` captura esse erro, mostra uma mensagem e pede o preço de novo, sem o programa travar.
-
-### 5. Guardar o produto
-
-```python
-produto = {"nome_do_produto": nome_do_produto, "preco_do_produto": preco_do_produto}
-itens.append(produto)
-```
-
-Monta um dicionário com o nome e o preço e o adiciona ao final da lista `itens` com `append()`.
-
-### 6. Perguntar se quer continuar
-
-```python
-continuar = input("Deseja adicionar mais itens?(s/n): ").strip().lower()
-```
-
-- `.strip()` remove espaços extras antes e depois da resposta.
-- `.lower()` deixa tudo em minúsculas, então `"S"` também vale como `"s"`.
-
-Qualquer resposta diferente de `"s"` encerra o laço.
-
-### 7. Calcular o subtotal
-
-```python
-for produto in itens:
-    subtotal = subtotal + produto["preco_do_produto"]
-```
-
-Percorre cada produto da lista e soma o seu preço ao `subtotal`.
-
-### 8. Mostrar o subtotal
-
-```python
-print(f"O valor sem o desconto é R$ {subtotal:.2f}")
-```
-
-A f-string (o `f` antes das aspas) coloca o valor de `subtotal` dentro do texto, no lugar de `{subtotal}`. O `:.2f` mostra o número com 2 casas decimais (`120.00` em vez de `120.0`).
-
-### 9. Calcular o desconto progressivo
+### Parte 3: Desconto progressivo
 
 ```python
 if subtotal > 200:
@@ -156,8 +113,6 @@ else:
 total = subtotal - desconto
 ```
 
-O desconto depende do valor da compra:
-
 | Subtotal | Desconto |
 |---|---|
 | até R$ 50,00 | sem desconto |
@@ -165,59 +120,63 @@ O desconto depende do valor da compra:
 | acima de R$ 100,00 | 10% |
 | acima de R$ 200,00 | 15% |
 
-- O `if` testa do **maior** valor para o **menor**. A ordem importa: uma compra de R$ 250 também é maior que 100 e maior que 50. Se o teste de 50 viesse primeiro, ela ganharia só 5%.
-- O `elif` ("senão, se") só é testado quando as condições de cima deram falso. Assim, só um dos blocos roda.
-- O sinal é `>` (maior que), não `>=`. Uma compra de exatamente R$ 100,00 fica na faixa de 5%, e uma de R$ 100,01 já ganha 10%.
-- No fim, o total é o subtotal menos o desconto.
+- **A ordem vai do maior para o menor.** Uma compra de R$ 250 também é maior que 100 e que 50. Se o teste de 50 viesse primeiro, ela ganharia só 5%.
+- **`elif` quer dizer "senão, se".** Só um dos blocos roda.
+- **O `else` garante `desconto = 0`.** Assim a variável sempre existe, mesmo sem desconto, e o cupom não quebra.
+- **O sinal é `>`, não `>=`.** R$ 100,00 fica na faixa de 5%; R$ 100,01 já ganha 10%.
 
-> **Atenção:** com o desconto progressivo, o teste "Exatamente 100" da tarefa 9 dá desconto de R$ 5,00, e não R$ 0,00. A tabela da tarefa 9 usa a regra antiga (10% só acima de R$ 100).
+> **Atenção:** o teste "Exatamente 100" da tarefa 9 espera desconto R$ 0,00, porque usa a regra antiga (10% só acima de R$ 100). Com o desconto progressivo, essa compra recebe R$ 5,00 de desconto.
 
-### 10. Imprimir o cupom
+### Parte 4: Cupom
 
 ```python
-print("========== CUPOM ==========")
-for produto in itens:
-    print(f"{produto['nome_do_produto']}  R$ {produto['preco_do_produto']:.2f}")
-print("---------------------------")
-print(f"Subtotal:  R$ {subtotal:.2f}")
-print(f"Desconto:  R$ {desconto:.2f}")
-print(f"Total:     R$ {total:.2f}")
+for item in itens:
+    print(f"{item['nome']}  R$ {item['preco']:.2f}")
 ```
 
-O `for` passa por cada produto da lista e imprime uma linha com o nome e o preço. Depois vêm o subtotal, o desconto e o total, todos com 2 casas decimais. Quando não há desconto, a linha aparece como `R$ 0.00`.
+O `for` passa por cada produto da lista e imprime o nome e o preço. Depois vêm o subtotal, o desconto e o total.
 
-Dentro da f-string, as chaves do dicionário usam aspas simples (`'nome_do_produto'`), porque o texto já está entre aspas duplas.
+- **O `f` antes das aspas** (f-string) coloca o valor das variáveis dentro do texto.
+- **`:.2f`** mostra o número com 2 casas decimais (`50.00` em vez de `50.0`).
 
-### 11. Forma de pagamento e troco
+### Parte 5: Pagamento e troco
 
 ```python
-forma_de_pagamento = input("Qual a forma de pagamento? (dinheiro/cartao): ").strip().lower()
+pagamento = input("Forma de pagamento (dinheiro/cartao): ").strip().lower()
 
-if forma_de_pagamento == "dinheiro":
+if pagamento == "dinheiro":
     valor_pago = 0
     while valor_pago < total:
-        valor_digitado_pelo_usuario = input("Quanto o cliente pagou? ")
         try:
-            valor_pago = float(valor_digitado_pelo_usuario)
+            valor_pago = float(input("Valor pago: "))
             if valor_pago < total:
                 print("Erro: o valor é menor que o total.")
         except ValueError:
-            print("Erro: Digite um número.")
-            valor_pago = 0
+            print("Erro: digite um número.")
+
     troco = valor_pago - total
     print(f"Troco: R$ {troco:.2f}")
 else:
     print("Pagamento no cartão.")
 ```
 
-- O programa pergunta a forma de pagamento. Como no "continuar", `.strip().lower()` aceita `"Dinheiro"` ou `" dinheiro "`.
-- **Se for dinheiro:** pede quanto o cliente pagou. É a mesma ideia da validação do preço:
-  - `valor_pago` começa em `0` para entrar no laço;
-  - o laço repete enquanto o valor não cobrir o total;
-  - letras geram `ValueError` e o `except` mostra a mensagem de erro;
-  - valor menor que o total mostra outra mensagem e pergunta de novo.
-- Quando vem um valor suficiente, o troco é `valor_pago - total`. Se o cliente pagar o valor exato, o troco é `R$ 0.00`.
-- **Qualquer outra resposta** (`cartao`, `pix`, um erro de digitação) cai no `else` e é tratada como cartão.
+- **Se for dinheiro:** pergunta quanto o cliente pagou e repete até o valor cobrir o total. É a mesma ideia da validação do preço na parte 2. No fim, mostra o troco (`valor_pago - total`).
+- **Qualquer outra resposta** cai no `else` e é tratada como cartão.
+
+## Variáveis
+
+| Variável | Tipo | O que guarda |
+|---|---|---|
+| `itens` | lista | Todos os produtos da compra. |
+| `subtotal` | número | A soma dos preços. |
+| `continuar` | texto | A resposta para "Adicionar mais itens?". |
+| `nome` | texto | O nome do produto atual. |
+| `preco` | número | O preço do produto atual. |
+| `desconto` | número | O valor do desconto. |
+| `total` | número | O que o cliente paga: subtotal menos desconto. |
+| `pagamento` | texto | A forma de pagamento: `"dinheiro"` ou `"cartao"`. |
+| `valor_pago` | número | Quanto o cliente entregou em dinheiro. |
+| `troco` | número | Valor pago menos total. |
 
 ## Conceitos de Python usados
 
