@@ -1,7 +1,7 @@
+print(subtotal)    
 itens = []
 continuar = "s"
 subtotal = 0
-
 
 while continuar == "s":
     nome = input("Qual o nome do produto ? ")
@@ -16,9 +16,11 @@ while continuar == "s":
 
     item = {"nome":nome,"preco":preco}
     itens.append(item)
-    subtotal = subtotal + item["preco"]
-
     continuar = input("Deseja adicionar mais itens?: ").strip().lower()
+    
+ for item in itens:
+    subtotal = subtotal + item["preco"]
+    
 
 
 print(f"O valor sem o desconto é ${subtotal}")
