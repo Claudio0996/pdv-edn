@@ -3,23 +3,22 @@ continuar = "s"
 subtotal = 0
 
 while continuar == "s":
-    nome = input("Qual o nome do produto ? ")
-    preco = 0
-    while preco <= 0:
-        texto = input("Qual o preço ? ")
+    nome_do_produto = input("Qual o nome do produto ? ")
+    preco_do_produto = 0
+    while preco_do_produto <= 0:
+        preco_digitado_pelo_usuario = input("Qual o preço ? ")
         try:
-            preco = float(texto)
+            preco_do_produto = float(preco_digitado_pelo_usuario)
         except ValueError:
             print("Erro: Digite um número.")
-            preco = 0
+            preco_do_produto = 0
 
-    item = {"nome":nome,"preco":preco}
-    itens.append(item)
+    produto = {"nome_do_produto": nome_do_produto, "preco_do_produto": preco_do_produto}
+    itens.append(produto)
     continuar = input("Deseja adicionar mais itens?(s/n): ").strip().lower()
-    
-for item in itens:
-    subtotal = subtotal + item["preco"]
-    
+
+for produto in itens:
+    subtotal = subtotal + produto["preco_do_produto"]
 
 
 print(f"O valor sem o desconto é ${subtotal}")
